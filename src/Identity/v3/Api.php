@@ -13,6 +13,13 @@ class Api extends AbstractApi
         $this->params = new Params();
     }
 
+    public function postScopedTokens(): array
+    {
+        $token = $this->postTokens();
+        $token['params']['scope'] = $this->params->scope();
+        return $token;
+    }
+
     public function postTokens(): array
     {
         return [
@@ -23,7 +30,6 @@ class Api extends AbstractApi
                 'user'                   => $this->params->user(),
                 'application_credential' => $this->params->applicationCredential(),
                 'tokenId'                => $this->params->tokenBody(),
-                'scope'                  => $this->params->scope(),
             ],
         ];
     }

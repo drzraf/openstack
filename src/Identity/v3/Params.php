@@ -16,7 +16,7 @@ class Params extends AbstractParams
             'items'       => ['type' => self::STRING_TYPE],
             'description' => <<<EOT
 An array of authentication methods (in string form) that the SDK will use to authenticate. The only acceptable methods
-are "password" or "token".
+are "password", "token" or "application_credential"
 EOT
         ];
     }

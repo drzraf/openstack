@@ -124,7 +124,10 @@ class Token extends OperatorResource implements Creatable, Retrievable, \OpenSta
             throw new \InvalidArgumentException('Either a user or token must be provided.');
         }
 
-        $response = $this->execute($this->api->postTokens(), $data);
+        $payload = $data['methods'][0] == 'application_credential'
+                 ? $this->api->postTokens()
+                 : $this->api->postScopedTokens();
+        $response = $this->execute($payload, $data);
         $token    = $this->populateFromResponse($response);
 
         // Cache response as an array to export if needed.
