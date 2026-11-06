@@ -59,6 +59,7 @@ class Service extends AbstractService implements IdentityService
                 return [$token, $baseUrl];
             }
         }
+
         if ($baseUrl = $token->catalog->getServiceUrl($name, $type, $region, $interface)) {
             return [$token, $baseUrl];
         }

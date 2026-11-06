@@ -38,8 +38,9 @@ class Catalog extends OperatorResource implements \OpenStack\Common\Auth\Catalog
      * @param string $type      the type of the service as it appears in the catalog
      * @param string $region    the region of the service as it appears in the catalog
      * @param string $interface the interface of the service as it appears in the catalog
+     * @param array  $overrides endpoint overrides to match against
      *
-     * @return null|string NULL if no URL found
+     * @return string|null NULL if no URL found
      */
     public function getServiceUrlOverride(
         string $name,
@@ -49,19 +50,20 @@ class Catalog extends OperatorResource implements \OpenStack\Common\Auth\Catalog
         array $overrides
     ): ?string {
         foreach ($overrides as $override) {
+            if (empty($override['name']) && empty($override['type'])) {
+                throw new \RuntimeException('Endpoint override must specify either a "name" or a "type".');
+            }
+
+            if (empty($override['url'])) {
+                throw new \RuntimeException(sprintf("Endpoint override must specify an \"url\".\nName: %s\nType: %s\nRegion: %s\nInterface: %s", $override['name'] ?? '', $override['type'] ?? '', $override['region'] ?? '', $override['interface'] ?? ''));
+            }
+
             if (
                 (empty($override['name']) || $name == $override['name'])
                 && (empty($override['type']) || $type == $override['type'])
                 && (empty($override['region']) || $region == $override['region'])
                 && (empty($override['interface']) || $interface == $override['interface'])
             ) {
-                if (empty($override['name']) && empty($override['type'])) {
-                    throw new \RuntimeException(sprintf("Endpoint override must at least specify an \"url\" and either \"name\" or a \"type\"."));
-                }
-                if (empty($override['url'])) {
-                    throw new \RuntimeException(sprintf("Endpoint override must specify an \"url\".\nName: %s\nType: %s\nRegion: %s\nInterface: %s", $override['name'] ?? '', $override['type'] ?? '', $override['region'] ?? '', $override['interface'] ?? ''));
-                }
-
                 return $override['url'];
             }
         }
